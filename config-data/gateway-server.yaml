@@ -47,3 +47,7 @@ spring:
           uri: lb://ms5
           predicates:
             - Path=/email/**
+        - id: ms6
+          uri: lb://ms6
+          predicates:
+            - Path=/rack/**
