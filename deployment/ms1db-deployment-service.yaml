@@ -49,7 +49,7 @@ spec:
     spec:
       containers:
         - name: ms1db
-          image: postgres16
+          image: postgres
           imagePullPolicy: "IfNotPresent"
           ports:
             - containerPort: 5432
