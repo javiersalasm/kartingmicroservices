@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ms1
+  labels:
+    app: ms1-deployment
+spec:
+  selector:
+    matchLabels:
+      app: ms1-deployment
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: ms1-deployment
+    spec:
+      containers:
+        - name: ms1
+          image: javiersalasm/ms1
+          ports:
+            - containerPort: 8090
+          env:
+            - name: SERVER_PORT
+              value: "0"
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config-map
+                  key: DB_HOST_MS1
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config-map
+                  key: DB_PORT_MS1
+            - name: DB_DBNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config-map
+                  key: DB_DBNAME_MS1
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: DB_USER_MS1
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: DB_PASSWORD_MS1

@@ -1,0 +1,90 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: ms4db-pv
+  labels:
+    type: local
+spec:
+  storageClassName: standard
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/data/ms4db-data"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ms4db-pvc
+  labels:
+    app: postgres
+    tier: database
+spec:
+  storageClassName: standard
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ms4db-deployment
+  labels:
+    app: ms4db-deployment
+    tier: database
+spec:
+  selector:
+    matchLabels:
+      app: ms4db-deployment
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: ms4db-deployment
+        tier: database
+    spec:
+      containers:
+        - name: ms4db
+          image: postgres16
+          imagePullPolicy: "IfNotPresent"
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: DB_USER_MS4
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: DB_PASSWORD_MS4
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: ms4db-data
+      volumes:
+        - name: ms4db-data
+          persistentVolumeClaim:
+            claimName: ms4db-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ms4db-service
+  labels:
+    app: ms4db-service
+    tier: database
+spec:
+  ports:
+    - port: 5432
+      targetPort: 5432
+      protocol: TCP
+  selector:
+    app: ms4db-deployment
+    tier: database
+  type: LoadBalancer

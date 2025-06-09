@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ms7
+  labels:
+    app: ms7-deployment
+spec:
+  selector:
+    matchLabels:
+      app: ms7-deployment
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: ms7-deployment
+    spec:
+      containers:
+        - name: ms7
+          image: javiersalasm/ms7
+          ports:
+            - containerPort: 8096
+          env:
+            - name: SERVER_PORT
+              value: "0"
