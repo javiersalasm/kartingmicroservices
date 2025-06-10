@@ -19,6 +19,13 @@ spec:
           image: javiersalasm/eureka-server
           ports:
             - containerPort: 8761
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1024Mi"
+              cpu: "500m"
 ---
 apiVersion: v1
 kind: Service
