@@ -22,3 +22,10 @@ spec:
           env:
             - name: SERVER_PORT
               value: "0"
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
